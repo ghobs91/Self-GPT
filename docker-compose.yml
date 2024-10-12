@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11400:11400"  # Exposes Ollama's default port
+    volumes:
+      - ollama_data:/app/data  # Persists Ollama's data
+    environment:
+      - SOME_ENV_VARIABLE=value  # Replace with any environment variables Ollama may need
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:git-0a08495-ollama
+    container_name: open-webui
+    ports:
+      - "3000:3000"  # Exposes Open WebUI's default port
+    depends_on:
+      - ollama  # Ensures Ollama starts first
+    environment:
+      - OLLAMA_HOST=http://ollama:11400  # Connects Open WebUI to Ollama's host
+    volumes:
+      - open_webui_data:/app/data  # Persists Open WebUI's data
+
+volumes:
+  ollama_data:
+  open_webui_data:
